@@ -15,24 +15,27 @@ values."
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
-   dotspacemacs-configuration-layers
-   '(auto-completion
-     (git :variables
-          git-enable-github-support t)
-     osx
-     deft
-     syntax-checking
-     clojure
-     common-lisp
-     haskell   ;:variables
-                ;haskell-enable-hindent-style "chris-done")
-     fasd
-     markdown
-     elm
-     emacs-lisp
-     version-control
-     swift
-     )
+   dotspacemacs-configuration-layers '(
+      auto-completion
+      better-defaults
+      (git :variables git-enable-github-support t)
+      osx
+      deft
+      syntax-checking
+      clojure
+      emacs-lisp
+      common-lisp
+      haskell        ;:variables
+                    ;haskell-enable-hindent-style "chris-done")
+      fasd
+      markdown
+      elm
+      version-control
+      swift
+      latex
+      java
+   )
+
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
@@ -93,10 +96,10 @@ This function is called at the very startup of Spacemacs initialization
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(tsdh-dark
+   dotspacemacs-themes '(spacemacs-dark
+                         tsdh-dark
                          noctilux
                          solarized-dark
-                         spacemacs-dark
                          zenburn
                          solarized-light
                          spacemacs-light
@@ -254,14 +257,22 @@ in `dotspacemacs/user-config'."
 This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
 
-  ;; Quicklisp with SBCL!!!
+  ;; slime
+  ;; quicklisp helper
   (load (expand-file-name "~/.quicklisp/slime-helper.el"))
   ;; Replace "sbcl" with the path to your implementation
   (setq inferior-lisp-program "sbcl")
+  (setq-default slime-fuzzy-disable-target-buffer-completions-mode t)
+
+  ;; auto completion
+  (global-company-mode)
 
   ;; appearance
   (powerline-default-theme)
   (spacemacs/toggle-menu-bar-on)
+
+  ;; smartparen off
+  (spacemacs/toggle-smartparens-globally-off)
 
   ;; window manipulation
   (global-set-key (kbd "C-j") 'evil-window-down)
@@ -277,8 +288,16 @@ layers configuration. You are free to put any user code."
   ;; file finder
   (evil-leader/set-key "oo" 'find-file-in-split)
   (setq-default neo-show-hidden-files nil)
+
+  ;; ignore OS X keys ; I don't like it.
   ;; (setq mac-option-modifier 'none)
   ;; (setq mac-command-modifier 'meta)
+
+  ;; Latex
+  (add-hook 'doc-view-mode-hook 'auto-revert-mode)
+
+  ;; eclim
+  (setq eclim-executable "/opt/homebrew-cask/Caskroom/eclipse-java/4.5.1/Eclipse.app/Contents/Eclipse/eclim")
 
   ;; start server
   (server-start)
