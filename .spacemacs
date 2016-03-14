@@ -112,7 +112,7 @@ This function is called at the very startup of Spacemacs initialization
                                :size 12
                                :weight normal
                                :width normal
-                               :powerline-scale 1.4
+                               :powerline-scale 1.5
                                :powerline-offset 0)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
@@ -212,7 +212,7 @@ This function is called at the very startup of Spacemacs initialization
    dotspacemacs-line-numbers t
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
-   dotspacemacs-smartparens-strict-mode nil
+   dotspacemacs-smartparens-strict-mode t
    ;; Select a scope to highlight delimiters. Possible values are `any',
    ;; `current', `all' or `nil'. Default is `all' (highlight any scope and
    ;; emphasis the current one). (default 'all)
@@ -248,28 +248,23 @@ in `dotspacemacs/user-config'."
     (let ((path (shell-command-to-string ". ~/.zshenv; echo -n $PATH")))
       (setq exec-path (split-string-and-unquote path path-separator)))
     (setq default-directory "~/"))
-  ;; Initial frame size
-  (setq default-frame-alist '((height . 50) (width . 100)))
   )
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
-  ;; slime
-  ;; quicklisp helper
-  (load (expand-file-name "~/quicklisp/slime-helper.el"))
-  ;; (setq inferior-lisp-program "sbcl --noinform --no-linedit")
-  (setq inferior-lisp-program "/usr/local/bin/ccl64 -- no-linedit")
-  (setq-default slime-fuzzy-disable-target-buffer-completions-mode t)
-  (slime-setup '(slime-fancy))
+  ;; Frame size
+  (setq-default default-frame-alist '((height . 50) (width . 100)))
 
-  ;; auto completion
-  (global-company-mode)
-
-  ;; appearance
+  ;; Appearance
   ;; (powerline-default-theme)
+  (setq-default powerline-default-separator 'zigzag)
   (spacemacs/toggle-menu-bar-on)
+  (spacemacs/toggle-mode-line-battery-on)
+
+  ;; Fringe
+  (spacemacs/toggle-vi-tilde-fringe-off)
 
   ;;; scroll one line at a time (less "jumpy" than defaults)
   ;; (setq mouse-wheel-scroll-amount '(2 ((shift) . 1))) ;; two lines at a time
@@ -278,12 +273,14 @@ layers configuration. You are free to put any user code."
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;
-  ;; Key mapping
+  ;; Key mappings
   ;; easy quit
   (spacemacs/set-leader-keys "qq" 'spacemacs/frame-killer) ;; Same as C-x C-c
   (spacemacs/set-leader-keys "qs" 'save-all-and-kill-frame) ;; Save all and kill frame
   (spacemacs/set-leader-keys "qk" 'spacemacs/prompt-kill-emacs) ;; Kill Emacs
-  ;; window manipulation
+  ;; window and buffer
+  (spacemacs/set-leader-keys "wD" 'delete-window-and-buffer)
+  ;; window switch
   (global-set-key (kbd "C-j") 'evil-window-down)
   (global-set-key (kbd "C-k") 'evil-window-up)
   (global-set-key (kbd "C-l") 'evil-window-right)
@@ -294,18 +291,40 @@ layers configuration. You are free to put any user code."
   (define-key evil-motion-state-map ";" 'evil-inner-curly)
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  ;; file finder
+  ;; NeoTree
   (setq-default neo-show-hidden-files nil)
 
-  ;; Latex
-  ;; (add-hook 'doc-view-mode-hook 'auto-revert-mode)
+  ;; Slime
+  ;; quicklisp helper
+  (load (expand-file-name "~/quicklisp/slime-helper.el"))
+  ;; (setq inferior-lisp-program "sbcl --noinform --no-linedit")
+  (setq inferior-lisp-program "/usr/local/bin/ccl64 -- no-linedit")
+  (setq-default slime-fuzzy-disable-target-buffer-completions-mode t)
+  (slime-setup '(slime-fancy))
 
-  ;; start server
+  ;; Latex
+  (add-hook 'doc-view-mode-hook 'auto-revert-mode)
+  ;; External PDF Viewer
+  (cond ((string-equal system-type "darwin")
+         (setq TeX-view-program-selection '((output-pdf "Skim"))))
+        ((string-equal system-type "gnu/linux")
+         (setq TeX-view-program-selection '((output-pdf "Okular")))))
+  (setq TeX-source-correlate-mode t)
+  (setq TeX-source-correlate-start-server t)
+  (setq TeX-source-correlate-method 'synctex)
+  (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
+                                ("Skim" "displayline -b -g %n %o %b")))
+
+  ;; Start server
   (unless (server-running-p) (server-start))
   )
 
 (defun call-interactively* (&rest actions)
   (map nil 'call-interactively actions))
+
+(defun delete-window-and-buffer ()
+  (interactive)
+  (call-interactively* 'kill-this-buffer 'delete-window))
 
 (defun save-all-and-kill-frame ()
   (interactive)
