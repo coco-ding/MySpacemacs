@@ -28,7 +28,7 @@ values."
       emacs-lisp
       common-lisp
       scheme
-      (haskell :variables haskell-enable-hindent-style "chris-done")
+      (haskell :variables haskell-enable-hindent-style "gibiansky")
       fasd
       python
       markdown
@@ -41,6 +41,7 @@ values."
       gtags
       search-engine
       django
+      pandoc
    )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -100,9 +101,9 @@ This function is called at the very startup of Spacemacs initialization
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(molokai
-                         spacemacs-dark
-                         spacemacs-light)
+   dotspacemacs-themes '(minimal
+                         monochrome-bright
+                         molokai)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
@@ -111,7 +112,7 @@ This function is called at the very startup of Spacemacs initialization
                                :size 12
                                :weight normal
                                :width normal
-                               :powerline-scale 1.1
+                               :powerline-scale 1.4
                                :powerline-offset 0)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
@@ -240,6 +241,13 @@ This function is called at the very startup of Spacemacs initialization
 It is called immediately after `dotspacemacs/init'.  You are free to put almost
 any user code here.  The exception is org related code, which should be placed
 in `dotspacemacs/user-config'."
+  ;; If running as daemon as launchctl services,
+  ;; copy PATH from ~/.zshenv and set default directory to $HOME.
+  ;; Bacause launchctl runs at system level
+  (when (daemonp)
+    (let ((path (shell-command-to-string ". ~/.zshenv; echo -n $PATH")))
+      (setq exec-path (split-string-and-unquote path path-separator)))
+    (setq default-directory "~/"))
   ;; Initial frame size
   (setq default-frame-alist '((height . 50) (width . 100)))
   )
@@ -260,7 +268,7 @@ layers configuration. You are free to put any user code."
   (global-company-mode)
 
   ;; appearance
-  (powerline-default-theme)
+  ;; (powerline-default-theme)
   (spacemacs/toggle-menu-bar-on)
 
   ;;; scroll one line at a time (less "jumpy" than defaults)
@@ -290,10 +298,10 @@ layers configuration. You are free to put any user code."
   (setq-default neo-show-hidden-files nil)
 
   ;; Latex
-  (add-hook 'doc-view-mode-hook 'auto-revert-mode)
+  ;; (add-hook 'doc-view-mode-hook 'auto-revert-mode)
 
   ;; start server
-  (or (server-running-p) (server-start))
+  (unless (server-running-p) (server-start))
   )
 
 (defun call-interactively* (&rest actions)
