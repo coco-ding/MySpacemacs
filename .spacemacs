@@ -101,9 +101,9 @@ This function is called at the very startup of Spacemacs initialization
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(minimal
-                         monochrome-bright
-                         molokai)
+   dotspacemacs-themes '(tao-yin
+                         tao-yang
+                         monokai)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
@@ -258,18 +258,19 @@ layers configuration. You are free to put any user code."
   (setq-default default-frame-alist '((height . 50) (width . 100)))
 
   ;; Appearance
-  ;; (powerline-default-theme)
   (setq-default powerline-default-separator 'zigzag)
   (spacemacs/toggle-menu-bar-on)
   (spacemacs/toggle-mode-line-battery-on)
+  ;; Turn off sRGB to avoid ugly powerline separators with 'emacs --cocoa' build
+  (setq ns-use-srgb-colorspace nil)
 
-  ;; Fringe
-  (spacemacs/toggle-vi-tilde-fringe-off)
+  ;; Fringe off
+  (when window-system (spacemacs/toggle-vi-tilde-fringe-off))
 
   ;;; scroll one line at a time (less "jumpy" than defaults)
-  ;; (setq mouse-wheel-scroll-amount '(2 ((shift) . 1))) ;; two lines at a time
-  ;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-  ;; (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+  (setq mouse-wheel-scroll-amount '(2 ((shift) . 1))) ;; two lines at a time
+  (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+  (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;
