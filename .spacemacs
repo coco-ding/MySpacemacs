@@ -26,22 +26,23 @@ values."
       (shell :variables shell-default-shell 'shell shell-enable-smart-eshell t)
       syntax-checking
       emacs-lisp
-      common-lisp
-      scheme
-      (haskell :variables haskell-enable-hindent-style "gibiansky")
+      ;;common-lisp
+      ;;scheme
+      ;;(haskell :variables haskell-enable-hindent-style "gibiansky")
       fasd
       python
       markdown
       elm
       version-control
-      swift
+      ;;swift
       (latex :variables latex-enable-auto-fill t latex-enable-folding t)
       java
-      scala
+      ;;scala
       gtags
       search-engine
-      django
+      ;;django
       pandoc
+      clojure
    )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -101,9 +102,10 @@ This function is called at the very startup of Spacemacs initialization
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(tao-yin
+   dotspacemacs-themes '(monokai
+                         tao-yin
                          tao-yang
-                         monokai)
+                         )
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
@@ -297,11 +299,11 @@ layers configuration. You are free to put any user code."
 
   ;; Slime
   ;; quicklisp helper
-  (load (expand-file-name "~/quicklisp/slime-helper.el"))
+  ;;(load (expand-file-name "~/quicklisp/slime-helper.el"))
   ;; (setq inferior-lisp-program "sbcl --noinform --no-linedit")
-  (setq inferior-lisp-program "/usr/local/bin/ccl64 -- no-linedit")
-  (setq-default slime-fuzzy-disable-target-buffer-completions-mode t)
-  (slime-setup '(slime-fancy))
+  ;;(setq inferior-lisp-program "/usr/local/bin/ccl64 -- no-linedit")
+  ;;(setq-default slime-fuzzy-disable-target-buffer-completions-mode t)
+  ;;(slime-setup '(slime-fancy))
 
   ;; Latex
   (add-hook 'doc-view-mode-hook 'auto-revert-mode)
